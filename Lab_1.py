@@ -50,3 +50,5 @@ for model in list_models:
 
     mean_mse_fold = sum(model_mse_scores) / k
     model_mean_mse_scores.append(mean_mse_fold)
+
+print(model_mean_mse_scores)
