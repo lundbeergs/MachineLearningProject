@@ -57,6 +57,4 @@ model_Lasso.fit(x_train_regression, y_train_regression)
 
 y_pred_lasso = model_Lasso.predict(x_test_regression)
 
-print(y_pred_lasso)
-
-np.save("y_pred_lasso", y_pred_lasso)
+# np.save("y_pred_lasso", y_pred_lasso)

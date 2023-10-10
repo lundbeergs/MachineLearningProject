@@ -36,8 +36,12 @@ for cluster_id in range(0, clusters):
 # Determent the amount of folds
 k = 15
 
-# Creat kfolds
+# Create kfolds
 kf = KFold(n_splits=k)
+
+# Alpha values for Ridge and Lasso
+alpha_Ridge = 0
+alpha_Lasso = 0
 
 # Create models
 model_Linear_regression = LinearRegression()
@@ -95,7 +99,5 @@ y_pred_model_2 = model_2.predict(x_test_regression)
 
 # Create two columns of both models
 y_pred_model_1_2 = np.column_stack((y_pred_model_1, y_pred_model_2))
-
-print(y_pred_model_1_2)
 
 # np.save("y_pred_lasso", y_pred_lasso)
