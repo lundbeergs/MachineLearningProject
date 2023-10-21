@@ -10,15 +10,15 @@ from sklearn.metrics import balanced_accuracy_score
 class CNNmodel(nn.Module):
     def __init__(self):
         super(CNNmodel, self).__init__()
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3)
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=3)
+        self.conv1 = nn.Conv2d(3, 8, kernel_size=3)
+        self.conv2 = nn.Conv2d(8, 16, kernel_size=3)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         self.flat = nn.Flatten()
-        self.fc1 = nn.Linear(32*5*5, 128)
+        self.fc1 = nn.Linear(16*5*5, 32)
         self.fc1_dropout = nn.Dropout(dropout_1) # Dropout neurons first layer
-        self.fc2 = nn.Linear(128, 32) # Single ouputs for binary classification
+        self.fc2 = nn.Linear(32, 16) # Single ouputs for binary classification
         self.fc2_dropout = nn.Dropout(dropout_2) # Dropout neurons second layer
-        self.fc3 = nn.Linear(32, 1)
+        self.fc3 = nn.Linear(16, 1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -68,19 +68,19 @@ if __name__ == '__main__':
     augmented_data = np.concatenate((x_train_class_normalized_reshaped, rotated_90, rotated_180, rotated_270), axis=0)
 
     augmented_labels = np.concatenate((y_train_classification, np.ones(sum([len(rotated_90), len(rotated_180), len(rotated_270)]))))
-    
+
     # Split the dataset into training
-    X_train, X_temp, y_train, y_temp = train_test_split(x_train_class_normalized_reshaped, y_train_classification, shuffle=True, test_size=0.3, random_state=39)
+    X_train, X_temp, y_train, y_temp = train_test_split(augmented_data, augmented_labels, shuffle=True, test_size=0.3, random_state=39, stratify=augmented_labels)
 
     # Split part of the training set into validation
-    X_valid, X_test, y_valid, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=39)
+    X_valid, X_test, y_valid, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=39, stratify=y_temp)
 
     # Define hyperparameters
-    epochs = 10 # Number of iterations through the CNN
+    epochs = 10 # Number of iterations through the CNNX
     epochs_check = 1 # How often we check how the model is doing during training
-    learning_rate = 0.0001 # lr = learning rate (if error dosen't go down after a bunch of iterations (epox), lower our learning rate)
-    dropout_1 = 0.2 # The amount of neurons that will be dropped each iteration during training to minimize overfittning
-    dropout_2 = 0.2 # The amount of neurons that will be dropped each iteration during training to minimize overfittning
+    learning_rate = 0.0008 # lr = learning rate (if error dosen't go down after a bunch of iterations (epox), lower our learning rate)
+    dropout_1 = 0.3 # The amount of neurons that will be dropped each iteration during training to minimize overfittning
+    dropout_2 = 0.3 # The amount of neurons that will be dropped each iteration during training to minimize overfittning
     weight_decay = 0.003 # Stops some of the neurons from being to or not to activated to avoid overfitting
     threshold = 0.5 # The threshhold for binary classification
 
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     with torch.no_grad():
         y_test_pred = CNNmodel(X_test).squeeze(1)
         binary_predictions = (y_test_pred >= threshold).long()
-        balanced_accuracy = balanced_accuracy_score(y_valid, binary_predictions[1:])
+        balanced_accuracy = balanced_accuracy_score(y_test, binary_predictions)
         test_loss = criterion(y_test_pred, y_test)
 
     print(f'Final Test Loss: {test_loss} Balanced accuracy: {balanced_accuracy}')
