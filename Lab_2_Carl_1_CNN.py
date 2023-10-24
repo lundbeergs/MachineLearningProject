@@ -10,13 +10,13 @@ from sklearn.metrics import balanced_accuracy_score
 class CNNmodel(nn.Module):
     def __init__(self):
         super(CNNmodel, self).__init__()
-        self.conv1 = nn.Conv2d(3, 8, kernel_size=3)
-        self.conv2 = nn.Conv2d(8, 16, kernel_size=3)
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=1)
         self.flat = nn.Flatten()
-        self.fc1 = nn.Linear(16*5*5, 32)
+        self.fc1 = nn.Linear(32*5*5, 128)
         self.fc1_dropout = nn.Dropout(dropout_1) # Dropout neurons first layer
-        self.fc2 = nn.Linear(32, 16) # Single ouputs for binary classification
+        self.fc2 = nn.Linear(128, 16) # Single ouputs for binary classification
         self.fc2_dropout = nn.Dropout(dropout_2) # Dropout neurons second layer
         self.fc3 = nn.Linear(16, 1)
         self.sigmoid = nn.Sigmoid()
