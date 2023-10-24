@@ -70,7 +70,8 @@ if __name__ == '__main__':
     augmented_labels = np.concatenate((y_train_classification, np.ones(sum([len(rotated_90), len(rotated_180), len(rotated_270)]))))
 
     # Split the dataset into training
-    X_train, X_temp, y_train, y_temp = train_test_split(augmented_data, augmented_labels, shuffle=True, test_size=0.3, random_state=39, stratify=augmented_labels)
+    # Split the dataset into training using stratification
+    X_train, X_temp, y_train, y_temp = train_test_split(x_train_class_normalized_reshaped, y_train_classification, shuffle=True, test_size=0.3, random_state=39, stratify=y_train_classification)
 
     # Split part of the training set into validation
     X_valid, X_test, y_valid, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=39, stratify=y_temp)
