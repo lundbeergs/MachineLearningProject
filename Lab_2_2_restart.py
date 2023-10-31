@@ -16,12 +16,12 @@ x_train_class_normalized_reshaped = x_train_class_normalized.reshape(-1, 28, 28,
 x_test_class_normalized = x_test_classification / 255.0
 x_test_class_normalized_reshaped = x_test_class_normalized.reshape(-1, 28, 28, 3)
 
+plt.figure(1)
 plt.imshow(x_train_class_normalized_reshaped[0])
 
-plt.show()
+rotated_90 = np.flip(x_train_class_normalized_reshaped, 2)
 
-rotated_90 = np.rot90(x_train_class_normalized_reshaped)
-
+plt.figure(2)
 plt.imshow(rotated_90[0])
 
 plt.show()

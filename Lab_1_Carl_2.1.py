@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.metrics import mean_squared_error
+from matplotlib.pyplot import pyplot as plt
 
 # Load in the dataset
 x_test_regression = np.load('X_test_regression2.npy')
@@ -101,6 +102,7 @@ for cluster in clusters_list:
 
 print(model_mean_mse_scores)
 print(best_alpha_values)
+print(clusters_list[0][0].size, clusters_list[1][0].size)
 
 # Model 1
 model_1 = Ridge(alpha=best_alpha_values[0])
@@ -120,3 +122,20 @@ y_pred_model_2 = model_2.predict(x_test_regression)
 y_pred_model_1_2 = np.column_stack((y_pred_model_1, y_pred_model_2))
 
 np.save("y_pred_model_1_2", y_pred_model_1_2)
+
+# Create a 2D scatter plot for x1
+plt.scatter(clusters_list[0][0][:, 0], clusters_list[0][0][:, 1], label='model_1_Ridge', marker='o')
+
+# Create a 2D scatter plot for x2
+plt.scatter(clusters_list[1][0][:, 0], clusters_list[1][0][:, 1], label='model_2_Ridge', marker='^')
+
+# Customize the plot
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.title('2D Scatter Plot with Two Sets of Data')
+
+# Add a legend to distinguish between x1 and x2
+plt.legend()
+
+# Display the plot
+plt.show()

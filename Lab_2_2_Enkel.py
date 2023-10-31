@@ -46,19 +46,13 @@ if __name__ == '__main__':
     # Extract the "true" data based on identified indices
     true_data = x_train_class_normalized_reshaped[true_indices]
 
-    # Rotate the "true" data by 90 degrees
-    rotated_90 = np.rot90(true_data, axes=(2, 3))
-
-    # Rotate the "true" data by 180 degrees
-    rotated_180 = np.rot90(rotated_90, axes=(2, 3))
-
-    # Rotate the "true" data by 270 degrees
-    rotated_270 = np.rot90(rotated_180, axes=(2, 3))
+    flipped_horizontal = np.flip(true_data, 3)
+    flipped_vertical = np.flip(true_data, 2)
 
     # Concatenate the rotated data with the original data
-    augmented_data = np.concatenate((x_train_class_normalized_reshaped, rotated_90, rotated_180, rotated_270), axis=0)
+    augmented_data = np.concatenate((x_train_class_normalized_reshaped, flipped_horizontal, flipped_vertical), axis=0)
 
-    augmented_labels = np.concatenate((y_train_classification, np.ones(sum([len(rotated_90), len(rotated_180), len(rotated_270)]))))
+    augmented_labels = np.concatenate((y_train_classification, np.ones(sum([len(flipped_horizontal), len(flipped_vertical)]))))
 
     # Split the dataset into training
     X_train, X_temp, y_train, y_temp = train_test_split(augmented_data, augmented_labels, shuffle=True, test_size=0.3, random_state=39, stratify=augmented_labels)
@@ -67,8 +61,8 @@ if __name__ == '__main__':
     X_valid, X_test, y_valid, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=39, stratify=y_temp)
 
     # Define hyperparameters
-    epochs = 100 # Number of iterations through the CNNX
-    epochs_check = 10 # How often we check how the model is doing during training
+    epochs = 10 # Number of iterations through the CNNX
+    epochs_check = 1 # How often we check how the model is doing during training
     learning_rate = 0.0001 # lr = learning rate (if error dosen't go down after a bunch of iterations (epox), lower our learning rate)
     weight_decay = 0.003 # Stops some of the neurons from being to or not to activated to avoid overfitting
     threshold = 0.5 # The threshhold for binary classification
@@ -152,8 +146,9 @@ if __name__ == '__main__':
     CNNmodel.eval()
     with torch.no_grad():
         y_test_pred = CNNmodel(X_test)
-        binary_predictions = roeeroreo
-        balanced_accuracy = balanced_accuracy_score(y_test, binary_predictions)
+        y_test_pred_softmax = y_test_pred.softmax(dim=1)
+        y_test_pred_softmax_argmax = y_test_pred_softmax.argmax(dim=1)
+        balanced_accuracy = balanced_accuracy_score(y_test, y_test_pred_softmax_argmax)
         test_loss = criterion(y_test_pred, y_test)
 
     print(f'Final Test Loss: {test_loss} Balanced accuracy: {balanced_accuracy}')
@@ -163,7 +158,7 @@ if __name__ == '__main__':
     # plt.plot(range(1, len(losses) + 1), losses, label='Training Loss')
     # plt.plot(range(1, len(valid_losses) + 1), valid_losses, label='Validation Loss')
     # plt.xlabel('Epochs')
-    # plt.ylabel('Loss')
+    # plt.ylabel('Loss')y_test_pred_softmax_argmax
     # plt.legend()
     # plt.show()
 
